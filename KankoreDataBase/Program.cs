@@ -42,16 +42,18 @@ namespace KankoreDataBase
             //改修
             int CombiedCorrction = CombiedFleet.GetCorrection(attackoption);
             int basePow = attackerPow + CombiedCorrction;
-
+       int FinalattackerPow =     KankoreDataBase.Attack.GetFinalPower(attackoption, basePow);
             throw new Exception();
         }
     }
 
     public static class Attack
     {
-        public static int GetFinalPower(AttackPropertys p)
+        public static int GetFinalPower(AttackPropertys p,int basePow)
         {
-            
+            double FormCorrection = Form.GetCorrection(p.FormType);
+            //陣形補正　次に実装
+            return (int)(basePow * FormCorrection);
         }
     }
 
@@ -67,7 +69,7 @@ namespace KankoreDataBase
             Tdisadvance,
         }
 
-        public static double Correction(Type t)
+        public static double GetCorrection(Type t)
         {
             if (t == Type.Same)
                 return 1;
@@ -86,6 +88,7 @@ namespace KankoreDataBase
         public bool IsMyFleet = true;
         public bool IsFleet1 = true;
         public CombiedFleet.CombiedFleetType type=CombiedFleet.CombiedFleetType.Air;
+        public Form.Type FormType=Form.Type.Same;
     }
 
     public static class CombiedFleet
