@@ -11,52 +11,51 @@ namespace KankoreDataBase
         private static void Main(string[] args)
         {
             KcDataBase.Init();
-            var s=new Ship(1);
-            var s0=new Ship(10);
-            s.Items=new Item[]{new Item(3), new Item(1), new Item(2) };
-            s0.Items= new Item[] { new Item(3), new Item(1), new Item(2) };
-            var p=new AttackPropertys();
-            var p0=new AttackPropertys();
+            var s = new Ship(1);
+            var s0 = new Ship(10);
+            s.Items = new[] {new Item(3), new Item(1), new Item(2)};
+            s0.Items = new[] {new Item(3), new Item(1), new Item(2)};
+            var p = new AttackPropertys();
+            var p0 = new AttackPropertys();
             p0.IsMyFleet = false;
-            p.type=CombiedFleet.CombiedFleetType.Air;
-            p0.type=CombiedFleet.CombiedFleetType.Air;
-            ShellAttack.Attack(s,s0,p,p0);
+            p.type = CombiedFleet.CombiedFleetType.Air;
+            p0.type = CombiedFleet.CombiedFleetType.Air;
+            ShellAttack.Attack(s, s0, p, p0);
         }
     }
 
-   
 
     public static class ShellAttack
     {
         /// <summary>
-        /// 改修未対応
+        ///     改修未対応
         /// </summary>
         /// <param name="attacker"></param>
         /// <param name="defender"></param>
         /// <param name="attackoption"></param>
         /// <param name="defenceoption"></param>
         /// <returns></returns>
-        static public Ship Attack(Ship attacker, Ship defender,AttackPropertys attackoption, AttackPropertys defenceoption)
+        public static Ship Attack(Ship attacker, Ship defender, AttackPropertys attackoption,
+            AttackPropertys defenceoption)
         {
-        int attackerPow=  (int)  attacker.GetStatus(ShipParameter.Pow);
+            var attackerPow = (int) attacker.GetStatus(ShipParameter.Pow);
             //改修
-            int CombiedCorrction = CombiedFleet.GetCorrection(attackoption);
-            int basePow = attackerPow + CombiedCorrction;
-       int FinalattackerPow =     KankoreDataBase.Attack.GetFinalPower(attackoption, basePow);
+            var CombiedCorrction = CombiedFleet.GetCorrection(attackoption);
+            var basePow = attackerPow + CombiedCorrction;
+            var FinalattackerPow = KankoreDataBase.Attack.GetFinalPower(attackoption, basePow);
             throw new Exception();
         }
     }
 
     public static class Attack
     {
-        public static int GetFinalPower(AttackPropertys p,int basePow)
+        public static int GetFinalPower(AttackPropertys p, int basePow)
         {
-            double FormCorrection = Form.GetCorrection(p.FormType);
+            var FormCorrection = Form.GetCorrection(p.FormType);
             //陣形補正　次に実装
-            return (int)(basePow * FormCorrection);
+            return (int) (basePow * FormCorrection);
         }
     }
-
 
 
     public class Form
@@ -66,7 +65,7 @@ namespace KankoreDataBase
             Same,
             Anti,
             Tadvance,
-            Tdisadvance,
+            Tdisadvance
         }
 
         public static double GetCorrection(Type t)
@@ -79,16 +78,17 @@ namespace KankoreDataBase
                 return 1.2;
             if (t == Type.Tdisadvance)
                 return .6;
-            throw  new Exception();
+            throw new Exception();
         }
     }
+
     public class AttackPropertys
     {
         public bool IsCombied = false;
         public bool IsMyFleet = true;
         public bool IsFleet1 = true;
-        public CombiedFleet.CombiedFleetType type=CombiedFleet.CombiedFleetType.Air;
-        public Form.Type FormType=Form.Type.Same;
+        public CombiedFleet.CombiedFleetType type = CombiedFleet.CombiedFleetType.Air;
+        public Form.Type FormType = Form.Type.Same;
     }
 
     public static class CombiedFleet
@@ -289,7 +289,7 @@ namespace KankoreDataBase
 
     public enum ItemParameter
     {
-        Pow,
+        Pow
     }
 
 
@@ -299,7 +299,7 @@ namespace KankoreDataBase
         HP,
         Name,
         SlotNums,
-        Pow,
+        Pow
     }
 
     public class Item
@@ -312,27 +312,26 @@ namespace KankoreDataBase
         public Item(int ID)
         {
             this.ID = ID;
-            this.data = KcDataBase.GetItemData(this.ID);
+            data = KcDataBase.GetItemData(this.ID);
         }
 
         public object GetStatus(ItemParameter p)
         {
             if (p == ItemParameter.Pow)
-            {
-                return  (int)data.NestedObject.First(x => (string)x.Key.Object == "FP").Value.Object;
-            }
+                return (int) data.NestedObject.First(x => (string) x.Key.Object == "FP").Value.Object;
             //pow double
             throw new Exception();
         }
     }
 
-    static class Renovation
+    internal static class Renovation
     {
         public static double GetPowerK(Item i)
         {
             return 0;
         }
     }
+
     public class Ship
     {
         public int Id;
@@ -367,17 +366,17 @@ namespace KankoreDataBase
                 return (string) data.NestedObject.First(x => (string) x.Key.Object == "nameJP").Value.Object;
             if (p == ShipParameter.Pow)
             {
-                var basePow= (int)data.NestedObject.First(x => (string)x.Key.Object == "FP").Value.Object;
+                var basePow = (int) data.NestedObject.First(x => (string) x.Key.Object == "FP").Value.Object;
                 return GetPower(basePow);
             }
 
             throw new Exception();
         }
 
-        int GetPower(int BasePower)
+        private int GetPower(int BasePower)
         {
             var itemsPowSum = Items.Select(x => (int) x.GetStatus(ItemParameter.Pow)).Sum();
-            return (int) (itemsPowSum + BasePower);
+            return itemsPowSum + BasePower;
         }
     }
 }
