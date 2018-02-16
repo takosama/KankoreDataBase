@@ -43,6 +43,7 @@ namespace KankoreDataBase
             var CombiedCorrction = CombiedFleet.GetCorrection(attackoption);
             var basePow = attackerPow + CombiedCorrction;
             var FinalattackerPow = KankoreDataBase.Attack.GetFinalPower(attackoption, basePow);
+            //POW計算実装中
             throw new Exception();
         }
     }
@@ -253,9 +254,9 @@ namespace KankoreDataBase
 
         public static void Init()
         {
-            var tmp = DataLoader.LoadRaw("ship.js");
+            var tmp = DataLoader.LoadRaw("ship.txt");
 
-            KCItemData = DataLoader.LoadRaw("itemData.js");
+            KCItemData = DataLoader.LoadRaw("itemData.txt");
             KCShipData = tmp;
         }
 
